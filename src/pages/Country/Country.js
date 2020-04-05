@@ -1,46 +1,48 @@
 import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Doughnut, Line } from 'react-chartjs-2';
-import { getSummary } from '../../store/actions/summary.actions';
+import { getCountryData } from '../../store/actions/countries.actions';
 import Summary from '../../components/Summary';
-import CountriesLatest from './CountriesLatest';
 import Section from '../../components/common/layout/Section';
 import Container from '../../components/common/layout/Container';
 import CountryList from '../../components/CountryList';
 
-const Home = ({ summary, dispatch }) => {
+const Country = ({ countriesAll, dispatch }) => {
+  const params = useParams();
+  const country = countriesAll[params.country];
+
   useEffect(() => {
-    if (!summary) {
-      dispatch(getSummary());
+    if (!country) {
+      //setLoading(true);
+      dispatch(getCountryData(params.country));
     }
   })
 
-  if (!summary) {
+  if (!country) {
     return <p>Loading...</p>
-  }
+  } 
 
-  const times = Object.keys(summary).filter(e => e !== 'updated_at' && e !== 'latest');
+  const times = Object.keys(country).filter(e => e !== 'updated_at' && e !== 'latest' && e !== 'Country/Region');
 
   return (
     <div>
 
       <Summary
-        region="Global"
-        infected={summary.latest.confirmed}
-        deaths={summary.latest.deaths}
-        recovered={summary.latest.recovered}
-        updatedAt={summary.updated_at}
+        region={country['Country/Region']}
+        infected={country.latest.confirmed}
+        deaths={country.latest.deaths}
+        recovered={country.latest.recovered}
+        updatedAt={country.updated_at}
       />
-
-      <CountriesLatest/>
 
       <Section>
         <Container>
-          <h4 style={{textAlign: 'center'}}>Global case</h4>
+          <h4 style={{textAlign: 'center'}}>{country['Country/Region']} case</h4>
 
           <Doughnut data={{
             datasets: [{
-              data: [summary.latest.confirmed, summary.latest.deaths, summary.latest.recovered],
+              data: [country.latest.confirmed, country.latest.deaths, country.latest.recovered],
               backgroundColor: ['#FF8C00', '#8B0000', '#006400']
             }],
             labels: ['Infected', 'Deaths', 'Recovered']
@@ -56,19 +58,19 @@ const Home = ({ summary, dispatch }) => {
             datasets: [
               {
                 label: 'Infected',
-                data: times.map(e => summary[e].confirmed),
+                data: times.map(e => country[e].confirmed),
                 borderColor: '#FF8C00',
                 backgroundColor: 'rgba(0, 0, 0, 0)'
               },
               {
                 label: 'Deaths',
-                data: times.map(e => summary[e].deaths),
+                data: times.map(e => country[e].deaths),
                 borderColor: '#8B0000',
                 backgroundColor: 'rgba(0, 0, 0, 0)'
               },
               {
                 label: 'Recovered',
-                data: times.map(e => summary[e].recovered),
+                data: times.map(e => country[e].recovered),
                 borderColor: '#006400',
                 backgroundColor: 'rgba(0, 0, 0, 0)'
               }
@@ -85,6 +87,6 @@ const Home = ({ summary, dispatch }) => {
   );
 }
 
-const mapStateToProps = state => ({ summary: state.summary });
+const mapStateToProps = state => ({ countriesAll: state.countriesAll });
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(Country);

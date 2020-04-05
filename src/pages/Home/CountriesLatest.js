@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { getCountriesLatest } from '../../store/actions/countries.actions';
 import Section from '../../components/common/layout/Section';
 import Container from '../../components/common/layout/Container';
@@ -20,7 +21,7 @@ const CountriesTable = props => (
     <tbody>
       {props.data.map(e => (
         <TableRow key={e['Country/Region']}>
-          <TableData>{e['Country/Region']}</TableData>
+          <TableData><Link to={`/${e['Country/Region']}`}>{e['Country/Region']}</Link></TableData>
           <TableData style={{color: '#FF8C00'}}>{e.latest.confirmed}</TableData>
           <TableData style={{color: '#8B0000'}}>{e.latest.deaths}</TableData>
           <TableData style={{color: '#006400'}}>{e.latest.recovered}</TableData>

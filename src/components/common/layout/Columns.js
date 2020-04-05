@@ -4,7 +4,10 @@ import breakpoints from '../options/breakpoints';
 
 export const Columns = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${props => props.isMobile ? 'row' : 'column'};
+  justify-content: ${props => props.isCentered ? 'center' : 'flex-start'};
+  align-items: ${props => props.isVCentered ? 'center' : 'stretch'};
+  flex-wrap: ${props => props.isWrap ? 'wrap' : 'nowrap'};
 
   @media (min-width: ${breakpoints.md}px) {
     flex-direction: row;
@@ -12,24 +15,8 @@ export const Columns = styled.div`
 `;
 
 export const Column = styled.div`
-  flex: 1;
-  margin: 1.5rem 0;
+  flex: ${props => props.isNarrow ? '0 1 auto' : '1'};
+  margin: ${props => props.isGapless ? '0' : '0.75rem'};
 
-  @media (min-width: ${breakpoints.md}px) {
-    &:nth-child(n+0) {
-      margin-left: 0;
-      margin-right: 1.5rem;
-    }
-
-    &:nth-child(3n+3) {
-      margin-left: 1.5rem;
-      margin-right: 0;
-    }
-
-    &:nth-child(2n+0) {
-      margin-left: 1.5rem;
-      margin-right: 1.5rem;
-    }
-  }
 `;
 
